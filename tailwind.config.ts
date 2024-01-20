@@ -16,6 +16,7 @@ const config: Config = {
       fontFamily: {
         Lemon: ['Lemon', 'sans-serif'],
         SpaceGrotesk: ['Space Grotesk', 'sans-serif'],
+        Kanit: ['Kanit', 'sans-serif']
        
       },
     },
