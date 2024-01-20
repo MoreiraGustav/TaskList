@@ -41,7 +41,7 @@ export default function AddTask() {
 
   return (
     <>
-      <div className="flex w-full h-20 justify-center items-center mt-10 sm:mt-20 gap-2">
+      <div className="flex w-full h-20 justify-center items-center mt-5 sm:mt-16 gap-2">
         <input
           className=" w-64 sm:w-96 h-10 rounded-md px-2  bg-slate-300 "
           value={tarefa}
@@ -54,7 +54,7 @@ export default function AddTask() {
           Add
         </button>
       </div>
-      <div className="w-full h-10 flex justify-between px-7">
+      <div className="w-full h-10 flex justify-between px-8 sm:px-96">
         <p className=" font-Kanit">tarefas criadas: {tarefaCriada}</p>
         <p className=" font-Kanit">tarefas concluídas: {tarefaConcluida}</p>
       </div>
