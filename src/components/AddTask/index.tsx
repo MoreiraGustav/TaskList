@@ -1,77 +1,92 @@
 "use client";
-import { useState } from "react";
+
+import { Box, Button, Flex, Input, Text } from "@chakra-ui/react";
+import { useEffect, useRef, useState } from "react";
 import CardTask from "../CardTask";
 
+interface TaskProps {
+  uid: string;
+  text: string;
+  status: boolean;
+}
+
 export default function AddTask() {
-  const [tarefa, setTarefa] = useState("");
-  const [listaDeTarefas, setListaDeTarefas] = useState<any>([]);
-  const [tarefaCriada, setTarefaCriada] = useState(0);
-  const [tarefaConcluida, setTarefaConcluida] = useState(0);
+  const [taskInfo, setTaskInfo] = useState({
+    totalTask: 0,
+    completedTask: 0,
+  });
+  const [orderList, setOrderList] = useState<TaskProps[]>([]);
+  const [taskList, setTaskList] = useState<TaskProps[]>([]);
+  const taskRef = useRef(null as any);
 
-  const addTarefa = () => {
-    if (tarefa.trim() !== "") {
-      setTarefaCriada(tarefaCriada + 1);
-      setListaDeTarefas([...listaDeTarefas, { texto: tarefa, concluida: false }]);
-      setTarefa("");
-    } else {
-      alert("Insira uma Tarefa");
-    }
+  const handleAddTask = () => {
+    const value = taskRef.current?.value;
+    setTaskList((prev) => [
+      ...prev,
+      {
+        uid: Math.random().toString(36).substr(2, 9),
+        text: value,
+        status: false,
+      },
+    ]);
   };
 
-  const AtualizarTarefa = (index:number, concluida: boolean) => {
-    setTarefaCriada(tarefaCriada - 1);
-
-    if (concluida) {
-      setTarefaConcluida(tarefaConcluida - 1);
-    }
+  const updateTaskInfo = () => {
+    setTaskInfo({
+      totalTask: taskList.length,
+      completedTask: taskList.filter((t) => t.status === true).length,
+    });
+    setOrderList(taskList.sort((a, b) => (a.status < b.status ? -1 : 1)));
   };
 
-  const ContadorTarefaConcluida = (index:number, concluida:boolean) => {
-    const novasTarefas = [...listaDeTarefas];
-    novasTarefas[index].concluida = !concluida;
+  const handleCompleteTask = (uid: string) => {
+    setTaskList((prev) =>
+      prev.map((task) => {
+        if (task.uid === uid) {
+          return { ...task, status: !task.status };
+        }
+        return task;
+      })
+    );
 
-    setListaDeTarefas(novasTarefas);
-
-    if (concluida) {
-      setTarefaConcluida(tarefaConcluida - 1);
-    } else {
-      setTarefaConcluida(tarefaConcluida + 1);
-    }
+    updateTaskInfo();
   };
+
+  useEffect(() => {
+    updateTaskInfo();
+  }, [taskList]);
 
   return (
     <>
-      <div className="flex w-full h-20 justify-center items-center mt-5 sm:mt-16 gap-2">
-        <input
-          className=" w-64 sm:w-96 h-10 rounded-md px-2  bg-slate-300 "
-          value={tarefa}
-          onChange={(event) => setTarefa(event.target.value)}
-        />
-        <button
-          className="bg-green-500 w-20 rounded-md h-10 font-SpaceGrotesk font-medium"
-          onClick={addTarefa}
-        >
-          Add
-        </button>
-      </div>
-      <div className="w-full h-10 flex justify-between px-8 sm:px-96">
-        <p className=" font-Kanit">tarefas criadas: {tarefaCriada}</p>
-        <p className=" font-Kanit">tarefas concluídas: {tarefaConcluida}</p>
-      </div>
-
-      <div className="flex justify-center flex-col items-center  overflow-auto max-h-80">
-        <ul>
-          {listaDeTarefas.map((tarefa: any , index: number) => (
+      <Box justifyContent={"center"} px={[2, 10, 40]}>
+        <Flex justify={"space-between"} py={2}>
+          <Text fontWeight={"bold"}>
+            Total de Tarefas: {taskInfo.totalTask}
+          </Text>
+          <Text fontWeight={"bold"}>
+            Tarefas concluidas: {taskInfo.completedTask}
+          </Text>
+        </Flex>
+        <Flex direction={["column", "row"]} gap={4}>
+          <Input borderColor={"gray.400"} ref={taskRef} />
+          <Button px={10} colorScheme="blue" onClick={handleAddTask}>
+            Add
+          </Button>
+        </Flex>
+        <Flex direction={"column"} gap={2} pt={4} px={15}>
+          {orderList.map((task) => (
             <CardTask
-              key={index}
-              textTask={tarefa.texto}
-              concluida={tarefa.concluida}
-              onDelete={() => AtualizarTarefa(index, tarefa.concluida)}
-              onConcluir={() => ContadorTarefaConcluida(index, tarefa.concluida)}
+              key={task.uid}
+              textTask={task.text}
+              completed={task.status}
+              onDelete={() =>
+                setTaskList(taskList.filter((t) => t.uid !== task.uid))
+              }
+              onComplete={() => handleCompleteTask(task.uid)}
             />
           ))}
-        </ul>
-      </div>
+        </Flex>
+      </Box>
     </>
   );
 }
