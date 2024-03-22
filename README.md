@@ -16,7 +16,10 @@ Esta é uma aplicação de lista de tarefas simples feita em TypeScript, utiliza
 - React (com Next.js)
 - ChakraUI
 ## Capturas de Tela 
+
+### Desktop
 ![Desktop](/public/telaDesktopUm.png).
 ![Desktop](/public/telaDesktopDois.png)
+### Mobile
 ![Mobile](/public/telaMobileUm.png)
 ![Mobile](/public/telaMobileDois.png)
